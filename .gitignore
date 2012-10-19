@@ -1,0 +1,17 @@
+# Maven output dir
+target
+
+# Eclipse
+.settings
+.project
+.classpath
+.cache
+
+# Java & package files #
+*.class
+*.jar
+*.war
+*.ear
+
+# Mac
+.DS_Store
