@@ -1,6 +1,7 @@
 package concreteWorld;
 
 import gameworld.Actor;
+import gameworld.Stone;
 import gameworld.World;
 
 import java.util.ArrayList;
@@ -17,6 +18,8 @@ import mesh.Faces.Factory;
 import mesh.Mesh;
 import mesh.Vertex;
 import util.Locations.Loc2d;
+import util.Vecs.Vec;
+import concreteWorld.VoronoiGameField.OwnedPolygon;
 
 public class VoronoiGameField extends Mesh<VoronoiGameField.OwnedPolygon> {
 	
@@ -36,10 +39,10 @@ public class VoronoiGameField extends Mesh<VoronoiGameField.OwnedPolygon> {
 
 	private static Map<Integer, Vertex> defaultVertexMapping() {
 		Map<Integer, Vertex> vertexMapping = new HashMap<Integer, Vertex>();
-		vertexMapping.put(0, new Vertex( new Loc2d(0, 0) ));
-		vertexMapping.put(1, new Vertex( new Loc2d(World.WIDTH, 0) ));
-		vertexMapping.put(2, new Vertex( new Loc2d(World.WIDTH, World.HEIGHT) ));
-		vertexMapping.put(3, new Vertex( new Loc2d(0, World.HEIGHT) ));
+		vertexMapping.put(0, new Vertex( new Vec(new Loc2d(0, 0) )));
+		vertexMapping.put(1, new Vertex( new Vec(new Loc2d(World.WIDTH, 0) )));
+		vertexMapping.put(2, new Vertex( new Vec(new Loc2d(World.WIDTH, World.HEIGHT) )));
+		vertexMapping.put(3, new Vertex( new Vec(new Loc2d(0, World.HEIGHT) )));
 		return vertexMapping;
 	}
 	
@@ -52,14 +55,24 @@ public class VoronoiGameField extends Mesh<VoronoiGameField.OwnedPolygon> {
 	public static class OwnedPolygon extends Face {
 		
 		Actor owner = null;
+		Vec stone = null;
 
-		public OwnedPolygon(Edge edge, Actor owner) {
+		public OwnedPolygon(Edge edge, Actor owner, Vec stone) {
 			super(edge);
 			this.owner = owner;
+			this.stone = stone;
+		}
+		
+		public OwnedPolygon(Edge edge, Actor owner) {
+			this( edge, owner, null );
 		}
 		
 		public Actor getOwner() {
 			return owner;
+		}
+		
+		public Vec getStone() {
+			return stone;
 		}
 		
 		public void setOwner(Actor owner) {

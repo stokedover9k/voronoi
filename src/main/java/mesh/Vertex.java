@@ -3,19 +3,19 @@ package mesh;
 import java.util.LinkedList;
 import java.util.List;
 
-import util.Locations.Loc;
+import util.Vecs.Vec;
 
 
 
 public class Vertex {
-	Loc location = null;
+	Vec location = null;
 	Edge edge = null;     // Vertex points to an OUTGOING edge
 
-	public Vertex(Loc location) {
+	public Vertex(Vec location) {
 		this.location = location;
 	}
 
-	public Vertex(Loc location, Edge edge) {
+	public Vertex(Vec location, Edge edge) {
 		this.location = location;
 		this.edge = edge;
 	}
@@ -63,7 +63,7 @@ public class Vertex {
 		return edge;
 	}
 	
-	public Loc getLocation() {
+	public Vec getLocation() {
 		return location;
 	}
 	
