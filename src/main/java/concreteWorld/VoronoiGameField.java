@@ -37,9 +37,9 @@ public class VoronoiGameField extends Mesh<VoronoiGameField.OwnedPolygon> {
 	private static Map<Integer, Vertex> defaultVertexMapping() {
 		Map<Integer, Vertex> vertexMapping = new HashMap<Integer, Vertex>();
 		vertexMapping.put(0, new Vertex( new Loc2d(0, 0) ));
-		vertexMapping.put(1, new Vertex( new Loc2d(World.getWidth(), 0) ));
-		vertexMapping.put(2, new Vertex( new Loc2d(World.getWidth(), World.getHeight()) ));
-		vertexMapping.put(3, new Vertex( new Loc2d(0, World.getHeight()) ));
+		vertexMapping.put(1, new Vertex( new Loc2d(World.WIDTH, 0) ));
+		vertexMapping.put(2, new Vertex( new Loc2d(World.WIDTH, World.HEIGHT) ));
+		vertexMapping.put(3, new Vertex( new Loc2d(0, World.HEIGHT) ));
 		return vertexMapping;
 	}
 	
