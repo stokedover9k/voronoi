@@ -50,10 +50,12 @@ public class Polygons {
 	public static class WeightedGaussianTriangleEvaluator implements TriangleEvaluator {
 
 		@Override
-		public double evalueate(Vec origin, Vec a, Vec b) {
+		public double evalueate(Vec origin, Vec vecA, Vec vecB) {
+			double a = origin.minus(vecA).norm();
+			double b = origin.minus(vecB).norm();
+			double c = vecA.minus(vecB).norm();
 			
-			
-			return 0;
+			return 0.25 * Math.sqrt((a+b-c)*(a-b+c)*(-a+b+c)*(a+b+c));
 		}
 		
 	}
