@@ -3,7 +3,9 @@ package mesh;
 import java.util.LinkedList;
 import java.util.List;
 
-import mesh.Locations.Loc;
+import util.Locations.Loc;
+
+
 
 public class Vertex {
 	Loc location = null;

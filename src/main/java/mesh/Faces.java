@@ -4,7 +4,7 @@ public class Faces {
 
 	public interface Factory<F extends Face> {
 		public F createFace(Edge edge);
-		public F cloneFace(Face face);
+		public F cloneFace(F face);
 	}
 
 	

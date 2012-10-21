@@ -11,7 +11,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import mesh.Locations.Loc2d;
+import util.Locations.Loc2d;
+
+
 
 public class Mesh<F extends Face> {
 	

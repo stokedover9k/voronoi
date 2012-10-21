@@ -126,11 +126,11 @@ public class World implements Moderator {
 		
 	}
 	
-	public static double getWidth() {
+	public static float getWidth() {
 		return worldWidth;
 	}
 	
-	public static double getHeight() {
+	public static float getHeight() {
 		return worldHeight;
 	}
 	

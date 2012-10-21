@@ -1,13 +1,17 @@
-package mesh;
+package util;
 
 
 public class Locations {
 	
 	public static class Loc {
-		final private float[] values;
+		final protected float[] values;
 		
 		public Loc( int degree ) {
 			values = new float[degree]; 
+		}
+		
+		public Loc( Loc otherLoc ) {
+			values = otherLoc.values.clone();
 		}
 
 		public int compareTo(Loc loc) {
