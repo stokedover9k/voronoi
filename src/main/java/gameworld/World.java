@@ -18,6 +18,7 @@ public class World implements Moderator {
 	private Actor player1;
 	private Actor player2;	
 	private WorldState worldState = new WorldState();
+	
 	private LinkedList<WorldUpdate> updateSequence = new LinkedList<WorldUpdate>();
 	
 	private Actor currentPlayer = null;

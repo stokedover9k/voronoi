@@ -39,8 +39,6 @@ public class WorldUpdate {
 	{
 		this( type, null );
 	}
-	
-	
 
 	public Actor getActor() {
 		return actor;
@@ -59,8 +57,6 @@ public class WorldUpdate {
 	public boolean isWin()      { return type == Type.WIN;     }
 	public boolean isLoss()     { return type == Type.LOSS;    }
 	public boolean isTerminal() { return isWin() || isLoss();  }
-
-	
 	
 	public static class Create {
 		private static final WorldUpdate fail = new WorldUpdate(Type.FAIL);
