@@ -14,6 +14,7 @@ package gameworld;
  * omnipotent hands and should be used carefully (for example, to reset the game).
  */
 
+
 public interface Moderator {
 
 	public WorldUpdate receiveOmnipotentUpdate( WorldUpdate worldUpdate );

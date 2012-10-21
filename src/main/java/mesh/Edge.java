@@ -62,7 +62,29 @@ public class Edge {
 		return edge;
 	}
 	
+	public Vertex split() {
+		Vertex newVertex = vertex.midpointTo(opposite.vertex);
+		return split(newVertex);
+	}
+	
+	public Vertex split(Vertex newVertex) {
+		Edge newNext     = new Edge(face, vertex, opposite, next);
+		Edge newOpposite = new Edge(opposite.face, opposite.vertex, this, opposite.next);
+		
+		this.opposite.next = newOpposite;
+		this.opposite.vertex = newVertex;
+		this.opposite.opposite = newNext;
+		
+		this.next = newNext;
+		this.vertex = newVertex;
+		this.opposite = newOpposite;
+		
+		newVertex.setEdge( face == null ? newNext : newOpposite );
+		
+		return newVertex;
+	}
+	
 	public String toString() {
-		return "E<" + vertex + "->" + (Object)next + ":" + (Object)face + ">"; 
+		return "E{" + (opposite == null ? "null" : opposite.vertex) + " -> " + vertex + "}";
 	}
 }

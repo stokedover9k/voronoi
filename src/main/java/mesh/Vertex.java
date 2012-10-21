@@ -42,7 +42,7 @@ public class Vertex {
 	}
 	
 	public String toString() {
-		return "V<" + location.toString() + ">";
+		return "V{" + location.toString() + "}";
 	}
 	
 	public int hashCode() {
@@ -59,6 +59,14 @@ public class Vertex {
 
 	public Edge getEdge() {
 		return edge;
+	}
+	
+	public Loc getLocation() {
+		return location;
+	}
+	
+	public Vertex midpointTo(Vertex vertex) {
+		return new Vertex(location.midpointTo(vertex.location));
 	}
 }
 

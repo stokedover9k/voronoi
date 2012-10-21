@@ -1,5 +1,6 @@
 package mesh;
 
+
 public class Locations {
 	
 	public static class Loc {
@@ -41,6 +42,13 @@ public class Locations {
 		
 		public int getDegree() {
 			return values.length;
+		}
+
+		public Loc midpointTo(Loc location) {
+			Loc midpoint = new Loc(values.length);
+			for( int i = 0; i < values.length; i++ )
+				midpoint.values[i] = (this.values[i] + location.values[i]) / 2;
+			return midpoint;
 		}
 	}
 
