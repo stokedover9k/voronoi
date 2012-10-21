@@ -115,7 +115,7 @@ public class Mesh<F extends Face> {
 				edge.getVertex().setEdge( edge.getNext() );
 				// TODO: push current edge???  Nope, seems like it's different implementation
 				
-				System.out.println( counter++ + " " + vertexIndex + " " + edge );
+				System.err.println( counter++ + " " + vertexIndex + " " + edge );
 				
 				
 				String oppositeKey = vertexIndex+","+previousIndex;
@@ -129,7 +129,7 @@ public class Mesh<F extends Face> {
 					edgeMap.put(previousIndex+","+vertexIndex, edge.getNext());
 				}
 				
-				System.out.println(edgeMap);
+				System.err.println(edgeMap);
 				
 				previousIndex = vertexIndex;
 				edge = edge.getNext();
@@ -268,7 +268,7 @@ public class Mesh<F extends Face> {
 		
 		Mesh<Face> mesh = new Mesh<Face>( v, f, new Faces.FaceFactory() );
 		
-		System.out.println(mesh);
+		System.err.println(mesh);
 		
 		mesh.validate();
 		
@@ -284,21 +284,21 @@ public class Mesh<F extends Face> {
 		if( faceToCut != null ) {
 			Face newFace = faceToCut.cut(vertices.get(0), vertices.get(2), new Face(null));
 			mesh.faces.add( newFace );
-			System.out.println("new face added: " + newFace);
+			System.err.println("new face added: " + newFace);
 			mesh.validate();
 		}
 		
 		Face removedFace = mesh.removeEdge(mesh.faces.iterator().next().getEdge());
 		removedFace.setEdge(null);
-		System.out.println("removed face: " + removedFace);
-		System.out.println(mesh);
+		System.err.println("removed face: " + removedFace);
+		System.err.println(mesh);
 		
 		mesh.validate();
 		//*/
 		
 		Mesh<Face> clonedMesh = new Mesh<Face>(mesh, new Faces.FaceFactory());
 		clonedMesh.validate();
-		System.out.println(clonedMesh);
+		System.err.println(clonedMesh);
 		
 		/*
 		int cloneTimes = 10000000;
@@ -306,7 +306,7 @@ public class Mesh<F extends Face> {
 		for( int i=0; i<cloneTimes; i++ ) {
 			new Mesh<Face>(mesh, faceFactory);
 		}
-		System.out.println("Done cloning mesh " + cloneTimes + " times");
+		System.err.println("Done cloning mesh " + cloneTimes + " times");
 		//*/
 	}
 }

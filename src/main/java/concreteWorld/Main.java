@@ -7,7 +7,9 @@ import gameworld.World;
 public class Main {
 
 	public static void main(String[] args) {
-		
+	    
+        int numStones = getNumStones(args);
+	    
 	    System.out.println("rky");
 	    
 		Actor player1 = new RandomPlayer("Timmy-1");
@@ -15,22 +17,40 @@ public class Main {
 		World.initWorld( player1, player2 );
 		World world = World.getInstance();
 		
-		Reporter reporter = new StdOutReporter(world);
+		Reporter stdErrReporter = new StdOutReporter(world);
+		Reporter serverReporter = new ServerReporter(world, player1);
 		
-//		while( world.reportLastUpdate().isTerminal() )
-		for( int i = 0; i < 10; i++ )
+		for(int i = 0 ; i < numStones*2 ; ++i)
 		{
 			world.continueGame();
-			reporter.reportUpdateToViewer();
-			reporter.reportStateToViewer();
+			stdErrReporter.reportUpdateToViewer();
+			stdErrReporter.reportStateToViewer();
+			serverReporter.reportUpdateToViewer();
 			
 			if( world.reportLastUpdate().isTerminal() ) {
-				System.out.println("End game");
+				System.err.println("End game");
 				break;
 			}
 		}
-		
-		System.out.println("done");
 	}
+
+    private static int getNumStones(String[] args)
+    {
+        int numStones = 0;
+        try
+        {
+            if (args.length != 1)
+            {
+                throw new Exception();
+            }
+            numStones = Integer.parseInt(args[0]);
+        }
+        catch (Exception e)
+        {
+            System.err.println("Must provide number of stones.");
+            System.exit(-1);
+        }
+        return numStones;
+    }
 
 }
