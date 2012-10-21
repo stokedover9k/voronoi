@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import mesh.Edge;
@@ -56,6 +57,7 @@ public class VoronoiGameField extends Mesh<VoronoiGameField.OwnedPolygon> {
 		
 		Actor owner = null;
 		Vec stone = null;
+		List<GridForOwnedPolygon> grids;
 
 		public OwnedPolygon(Edge edge, Actor owner, Vec stone) {
 			super(edge);
