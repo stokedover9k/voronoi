@@ -1,5 +1,7 @@
 package util;
 
+import util.Vecs.Vec;
+
 
 public class Locations {
 	

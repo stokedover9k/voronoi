@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 import util.Locations.Loc2d;
+import util.Vecs.Vec;
 
 
 
@@ -255,11 +256,11 @@ public class Mesh<F extends Face> {
 	public static void main(String[] args) {
 		
 		Map<Integer, Vertex> v = new HashMap<Integer, Vertex>();
-		v.put(0, new Vertex(new Loc2d(-5, -5)));
-		v.put(1, new Vertex(new Loc2d( 5, -5)));
-		v.put(2, new Vertex(new Loc2d( 5,  5)));
-		v.put(3, new Vertex(new Loc2d(-5,  5)));
-		v.put(4, new Vertex(new Loc2d( 0,  8)));
+		v.put(0, new Vertex(new Vec(new Loc2d(-5, -5))));
+		v.put(1, new Vertex(new Vec(new Loc2d( 5, -5))));
+		v.put(2, new Vertex(new Vec(new Loc2d( 5,  5))));
+		v.put(3, new Vertex(new Vec(new Loc2d(-5,  5))));
+		v.put(4, new Vertex(new Vec(new Loc2d( 0,  8))));
 		
 		Collection<LinkedList<Integer>> f = new LinkedList<LinkedList<Integer>>();
 		f.add( new LinkedList<Integer>( Arrays.asList(0, 1, 2, 3 ) ) );

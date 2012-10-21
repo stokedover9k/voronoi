@@ -4,8 +4,8 @@ import util.Locations.Loc;
 
 /*
  * The following operations are available for +, -, and * operations in vector math
- * In-place operations: add,   subtract,  scale,  normalize
- * Not in-place:        plus,  minus,     times,  dir
+ * In-place operations:  add,   subtract,  scale,  normalize
+ * Not in-place:         plus,  minus,     times,  dir
  */
 
 public class Vecs {
@@ -72,13 +72,22 @@ public class Vecs {
 			return (float) Math.sqrt(dot(this));
 		}
 		
+		// makes the vector unit length
 		public Vec normalize() {
 			scale( 1.0F / norm() );
 			return this;
 		}
 		
+		// returns a unit vector in the same direction
 		public Vec dir() {
 			return times( 1.0F / norm() );
+		}
+		
+		public Vec midpointTo(Vec location) {
+			Vec midpoint = new Vec(values.length);
+			for( int i = 0; i < values.length; i++ )
+				midpoint.values[i] = (this.values[i] + location.values[i]) / 2;
+			return midpoint;
 		}
 		
 	}
