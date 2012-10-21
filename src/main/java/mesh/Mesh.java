@@ -4,10 +4,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import mesh.Locations.Loc2d;
 
@@ -16,6 +18,75 @@ public class Mesh<F extends Face> {
 	Collection<F> faces = new HashSet<F>();
 	
 	
+	
+	// Copy constructor (deep copy)
+	public Mesh( Mesh<F> otherMesh, Faces.Factory<F> faceFactory ) {
+		Map<Vertex, Vertex> vertices = new IdentityHashMap<Vertex, Vertex>();
+		Map<Edge, Edge> edges = new IdentityHashMap<Edge, Edge>();
+		Map<F, F> faces = new IdentityHashMap<F, F>();
+		
+		Set<Edge> boundaryEdges = new HashSet<Edge>();
+		
+		for( F face : otherMesh.faces ) {
+			F clonedFace = faceFactory.cloneFace( face );
+			faces.put( face, clonedFace );
+			this.faces.add(clonedFace);
+			
+			for( Edge edge : face.getEdges() ) {
+				Vertex clonedVertex = vertices.get( edge.getVertex() );
+				if( clonedVertex == null ) {
+					clonedVertex = new Vertex( edge.getVertex().getLocation() );
+					vertices.put( edge.getVertex(), clonedVertex );
+				}
+				Edge clonedEdge = new Edge(clonedFace, clonedVertex, null, null);
+				if( edge.getVertex().getEdge() == edge )
+					clonedVertex.setEdge( clonedEdge );
+				else if( edge.getVertex().getEdge().getFace() == null ) {
+					boundaryEdges.add(edge.getVertex().getEdge());
+				}
+				
+				edges.put(edge, clonedEdge);
+			}
+			
+			clonedFace.setEdge( edges.get(face.getEdge()) );
+		}
+		
+//		List<Edge> clonedBoundary = new LinkedList<Edge>();
+		
+		for( Map.Entry<Edge, Edge> edgeMapping : edges.entrySet() ) {
+			Edge originalEdge = edgeMapping.getKey();
+			Edge clonedEdge = edgeMapping.getValue();
+			
+			/*
+			Edge originalOpposite = originalEdge.getOpposite();
+			if( originalOpposite.getFace() == null ) {
+				Edge clonedOpposite = new Edge(null, vertices.get(originalOpposite.getVertex()), clonedEdge, null);
+				clonedBoundary.add( clonedOpposite );
+				clonedEdge.setOpposite( clonedOpposite );
+			}
+			else {
+			*/
+			clonedEdge.setOpposite( edges.get(originalEdge.getOpposite()) );
+//			}
+			clonedEdge.setNext( edges.get(originalEdge.getNext()) );
+		}
+		
+		List<Edge> clonedBoundary = new LinkedList<Edge>();
+		for( Edge boundaryEdge : boundaryEdges ) {
+			Edge clonedEdge = new Edge(null, null, null, null);
+			clonedEdge.setVertex( vertices.get(boundaryEdge.getVertex()) );
+			clonedEdge.setOpposite( edges.get(boundaryEdge.getOpposite()) );
+
+			edges.get(boundaryEdge.getOpposite()).setOpposite( clonedEdge );
+			clonedEdge.getOpposite().getVertex().setEdge( clonedEdge );
+			
+			clonedBoundary.add(clonedEdge);
+		}
+		
+		for( Edge clonedBoundaryEdge : clonedBoundary ) {
+			clonedBoundaryEdge.setNext( clonedBoundaryEdge.getVertex().getEdge() );
+		}
+	}
 	
 	// Takes a Map of vertices with keys (integers), and a collection of faces represented as lists
 	// of keys to the vertices in the map.
@@ -79,6 +150,7 @@ public class Mesh<F extends Face> {
 		}
 		
 	}
+	
 	
 	
 	// Removes the edge, thus extending the face it is associated with.
@@ -219,5 +291,19 @@ public class Mesh<F extends Face> {
 		System.out.println(mesh);
 		
 		mesh.validate();
+		//*/
+		
+		Mesh<Face> clonedMesh = new Mesh<Face>(mesh, new Faces.FaceFactory());
+		clonedMesh.validate();
+		System.out.println(clonedMesh);
+		
+		/*
+		int cloneTimes = 10000000;
+		Faces.FaceFactory faceFactory = new Faces.FaceFactory();
+		for( int i=0; i<cloneTimes; i++ ) {
+			new Mesh<Face>(mesh, faceFactory);
+		}
+		System.out.println("Done cloning mesh " + cloneTimes + " times");
+		//*/
 	}
 }
