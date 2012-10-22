@@ -33,10 +33,14 @@ public class RandomPlayer implements Actor {
 
 	@Override
 	public WorldUpdate proposeAction() {
-	    System.err.println(name + ": generating action");
-		int x = (int) (World.WIDTH  * Math.random());
+	    int x = (int) (World.WIDTH  * Math.random());
 		int y = (int) (World.HEIGHT * Math.random());
 		return new WorldUpdate(WorldUpdate.Type.PLACE_STONE, this, new Stone(x,y));
+	}
+	
+	@Override
+	public String toString() {
+	    return "name=" + name + ",number=" + playerNumber + ",team=" + team;
 	}
 
     @Override

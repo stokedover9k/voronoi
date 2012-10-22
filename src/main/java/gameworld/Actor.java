@@ -37,4 +37,6 @@ public interface Actor {
 	
 	// returns turn number of the player (what order they take their turn in)
 	public int number();
+	
+	public String toString();
 }

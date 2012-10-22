@@ -5,6 +5,7 @@ import gameworld.Stone;
 import gameworld.WorldState;
 import gameworld.WorldUpdate;
 
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class ServerPlayer implements Actor
@@ -38,13 +39,25 @@ public class ServerPlayer implements Actor
     public WorldUpdate proposeAction()
     {
         Stone s = null;
-        if (scan.hasNextLine())
+        System.err.println("Waiting for server to report opponent move.");
+        while (true)
         {
             //ex. 40,126 874,264 618,561 6,738 795,679 | 494767.00191,505232.998
-            String input = scan.nextLine();
-            System.err.println("Input from server " + input);
+            String input = null;
+            try
+            {
+                input = scan.nextLine();
+            }
+            catch (NoSuchElementException e)
+            {
+                System.exit(0); // game over
+            }
+            
+            if(input.isEmpty()) 
+                continue; // ignore empty messages from server
+            
+            System.err.println("Raw message from server " + input);
             String[] message = input.split("\\|");
-            print("message", message);
             String[] coordinates = message[0].trim().split(" ");
             String[] stone = coordinates[0].trim().split(",");
             s = new Stone (
@@ -52,22 +65,15 @@ public class ServerPlayer implements Actor
               Integer.parseInt(stone[1])
             );
             System.err.println("Stone from server, " + s.toString());
+            break;
         } 
         
         return new WorldUpdate(WorldUpdate.Type.PLACE_STONE, this, s);
     }
 
-    private void print(String name, String[] arr)
-    {
-        System.err.println(name);
-        int i = 0;
-        for (String str : arr)
-        {
-            System.err.print("[" + i + "]=" + str);
-            if (i < str.length() - 1) System.err.print(",");
-            i++;
-        }
-        System.err.println();
+    @Override
+    public String toString() {
+        return "name=" + name + ",number=" + playerNumber + ",team=" + team;
     }
     
     @Override

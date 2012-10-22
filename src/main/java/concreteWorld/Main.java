@@ -4,43 +4,53 @@ import gameworld.Actor;
 import gameworld.Actor.Team;
 import gameworld.Reporter;
 import gameworld.World;
+import gameworld.WorldUpdate;
 import concreteWorld.Main.GameParams.Mode;
 
 public class Main {
 
     public static GameParams GAME_PARAMS;
     
-    //args = #STONES PLAYER# #PLAYERS MODE(M=MELEE,T=TWO_PLAYER)
+    //args = #STONES PLAYER# MODE(M=MELEE,T=TWO_PLAYER)
 	public static void main(String[] args) 
 	{
 	    GAME_PARAMS = parseParams(args);
 	    World world = World.getInstance();
 	    
-        Actor us = new RandomPlayer (
+	    Actor us = new RandomPlayer (
                 "rky", 
                 GAME_PARAMS.playerNumber == 1 ? 1 : 2, 
                 GAME_PARAMS.playerNumber == 1 ? Team.RED : Team.BLUE
         );
+	    
+	    System.err.println("Created ourselves as a random player. " + us.toString());
         
-        Actor them = new RandomPlayer (
-                "opponent", 
-                GAME_PARAMS.playerNumber == 1 ? 1 : 2, 
-                GAME_PARAMS.playerNumber == 1 ? Team.RED : Team.BLUE
+        Actor them = new ServerPlayer (
+                "them", 
+                GAME_PARAMS.playerNumber == 1 ? 2 : 1, 
+                GAME_PARAMS.playerNumber == 1 ? Team.BLUE : Team.RED
         );
+        
+        System.err.println("Created opponent as a server player. " + them.toString());
         
         world.addPlayer(us);
         world.addPlayer(them);
         
+        System.out.println("rky");
+        
 		Reporter stdErrReporter = new StdOutReporter(world);
-		Reporter serverReporter = new ServerReporter(world, us);
-		
 		for(int i = 0 ; i < GAME_PARAMS.numStones*2 ; ++i)
 		{
+		    System.err.println("Current player is " + world.getCurrentPlayer().toString());
 			world.continueGame();
-			stdErrReporter.reportUpdateToViewer();
 			stdErrReporter.reportStateToViewer();
-			serverReporter.reportUpdateToViewer();
 			
+            WorldUpdate u = world.reportLastUpdate();
+            if (u.getActor() == us)
+            {
+                System.out.println(u.getStone().x + "," + u.getStone().y + " ");
+            }
+		    
 			if( world.reportLastUpdate().isTerminal() ) {
 				System.err.println("End game");
 				break;
@@ -66,11 +76,11 @@ public class Main {
         }
     }
 	
-	//args = #STONES PLAYER# #PLAYERS MODE(M=MELEE,T=TWO_PLAYER)
+	//args = #STONES PLAYER# MODE(M=MELEE,T=TWO_PLAYER)
     private static GameParams parseParams(String[] args)
     {
         int numStones = 0;
-        int numPlayers = 0;
+        int numPlayers = 2;
         int playerNum = 0;
         Mode mode = null;
         try
@@ -80,18 +90,10 @@ public class Main {
             
             try
             {
-                numPlayers = Integer.parseInt(args[2]);
-            }
-            catch (Exception e)
-            {
-                numPlayers = 2;
-            }
-            
-            try
-            {
-                if (args[3].equals("M"))
+                if (args[2].equals("M"))
                 {
                     mode = Mode.MELEE;
+                    numPlayers = 3;
                 }
                 else 
                 {
@@ -118,7 +120,7 @@ public class Main {
         String argStr = "";
         for(String a : args) argStr += a;
         System.err.println("Invalid/missing arguments. " + argStr);
-        System.err.println("\tusage: java -jar voronoi-1.0.0.jar #STONES PLAYER# #PLAYERS MODE(M=MELEE,T=TWO_PLAYER)");
+        System.err.println("\tusage: java -jar voronoi-1.0.0.jar #STONES PLAYER# MODE(M=MELEE,T=TWO_PLAYER)");
     }
 
 }

@@ -54,6 +54,11 @@ public class World implements Moderator {
             nextPlayerNumber = 1;
         return getPlayerByNumber(nextPlayerNumber);
     }
+    
+    public Actor getCurrentPlayer()
+    {
+        return currentPlayer;
+    }
 
 	@Override
 	public WorldUpdate reportLastUpdate() {
@@ -68,12 +73,13 @@ public class World implements Moderator {
 	@Override
     public void continueGame()
     {
-
         WorldUpdate update = currentPlayer.proposeAction();
+        System.err.println(currentPlayer.toString() + " selects move " + update.toString());
         WorldUpdate result = worldState.applyUpdate(update);
 
         if (result.isConfirm())
         {
+            System.err.println("Update approved.");
             updateSequence.add(update);
             notifyAllPlayers(update);
             currentPlayer = getNextPlayer(currentPlayer);
@@ -81,6 +87,7 @@ public class World implements Moderator {
         }
         else
         {
+            System.err.println("Update failed.");
             if (warnedPlayer != currentPlayer) // first offense
             {
                 currentPlayer.receiveUpdate(result);
