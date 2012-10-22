@@ -32,7 +32,7 @@ public class World implements Moderator {
 	}
 	
 	public void addPlayer(Actor player) {
-	    if(players.isEmpty()) {
+	    if(player.number() == 1) {
 	        currentPlayer = player;
 	    }
 	    players.add(player);

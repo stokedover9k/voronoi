@@ -10,21 +10,24 @@ public class Main {
 
     public static GameParams GAME_PARAMS;
     
-    //args = #STONES #PLAYERS PLAYER# MODE(M=MELEE,T=TWO_PLAYER)
+    //args = #STONES PLAYER# #PLAYERS MODE(M=MELEE,T=TWO_PLAYER)
 	public static void main(String[] args) 
 	{
 	    GAME_PARAMS = parseParams(args);
 	    World world = World.getInstance();
 	    
         Actor us = new RandomPlayer (
-                "rky", 1, Team.RED
+                "rky", 
+                GAME_PARAMS.playerNumber == 1 ? 1 : 2, 
+                GAME_PARAMS.playerNumber == 1 ? Team.RED : Team.BLUE
         );
         
         Actor them = new RandomPlayer (
-                "opponent", 2, Team.BLUE
+                "opponent", 
+                GAME_PARAMS.playerNumber == 1 ? 1 : 2, 
+                GAME_PARAMS.playerNumber == 1 ? Team.RED : Team.BLUE
         );
         
-        // Add players in order they will play
         world.addPlayer(us);
         world.addPlayer(them);
         
@@ -63,6 +66,7 @@ public class Main {
         }
     }
 	
+	//args = #STONES PLAYER# #PLAYERS MODE(M=MELEE,T=TWO_PLAYER)
     private static GameParams parseParams(String[] args)
     {
         int numStones = 0;
@@ -71,24 +75,32 @@ public class Main {
         Mode mode = null;
         try
         {
-            if (args.length != 4)
-            {
-                throw new Exception();
-            }
             numStones = Integer.parseInt(args[0]);
-            numPlayers = Integer.parseInt(args[1]);
-            playerNum = Integer.parseInt(args[2]);
-            if (args[3].equals("M"))
+            playerNum = Integer.parseInt(args[1]);
+            
+            try
             {
-                mode = Mode.MELEE;
+                numPlayers = Integer.parseInt(args[2]);
             }
-            else if (args[3].equals("T"))
+            catch (Exception e)
+            {
+                numPlayers = 2;
+            }
+            
+            try
+            {
+                if (args[3].equals("M"))
+                {
+                    mode = Mode.MELEE;
+                }
+                else 
+                {
+                    mode = Mode.TWO_PLAYER;
+                }
+            }
+            catch (Exception e)
             {
                 mode = Mode.TWO_PLAYER;
-            }
-            else
-            {
-                throw new Exception("Invalid game mode.");
             }
         }
         catch (Exception e)
@@ -106,7 +118,7 @@ public class Main {
         String argStr = "";
         for(String a : args) argStr += a;
         System.err.println("Invalid/missing arguments. " + argStr);
-        System.err.println("\tusage: java -jar voronoi-1.0.0.jar #STONES #PLAYERS PLAYER# MODE(M=MELEE,T=TWO_PLAYER)");
+        System.err.println("\tusage: java -jar voronoi-1.0.0.jar #STONES PLAYER# #PLAYERS MODE(M=MELEE,T=TWO_PLAYER)");
     }
 
 }
