@@ -1,6 +1,7 @@
 package util;
 
 import util.Locations.Loc;
+import util.Locations.Loc2d;
 
 /*
  * The following operations are available for +, -, and * operations in vector math
@@ -46,21 +47,21 @@ public class Vecs {
 			return vec;
 		}
 		
-		public Vec scale(float s) {
+		public Vec scale(double x) {
 			for( int i = 0; i < values.length; i++ )
-				values[i] *= s;
+				values[i] *= x;
 			return this;
 		}
-		public Vec times(float s) {
+		public Vec times(double x) {
 			Vec vec = new Vec(values.length);
 			for( int i = 0; i < values.length; i++ )
-				vec.values[i] = values[i] * s;
+				vec.values[i] = values[i] * x;
 			return vec;
 		}
 		
 		// the dot product
-		public float dot(Loc loc) {
-			float sum = 0;
+		public double dot(Loc loc) {
+			double sum = 0;
 			for( int i = 0; i < values.length; i++ ) {
 				sum += values[i] * loc.values[i];
 			}
@@ -68,8 +69,8 @@ public class Vecs {
 		}
 		
 		// the length of the vector
-		public float norm() {
-			return (float) Math.sqrt(dot(this));
+		public double norm() {
+			return Math.sqrt(dot(this));
 		}
 		
 		// makes the vector unit length
@@ -83,7 +84,7 @@ public class Vecs {
 			return times( 1.0F / norm() );
 		}
 		
-		public Vec midpointTo(Vec location) {
+		public Vec midpointTo(Loc location) {
 			Vec midpoint = new Vec(values.length);
 			for( int i = 0; i < values.length; i++ )
 				midpoint.values[i] = (this.values[i] + location.values[i]) / 2;
@@ -92,4 +93,68 @@ public class Vecs {
 		
 	}
 
+	
+	public static Vec perpendicular(Vec vec) {
+		Vec temp = new Vec(vec);
+		temp.values[0] += 1;
+		if( vec.dir().dot(temp.normalize()) < 1 ) ;
+		else temp.values[1] += 1;
+		
+		Vec a = vec.times(vec.dot(temp));
+		return temp.subtract(a);
+	}
+	
+	
+	
+	// L is the line to intersect
+	// L's location is expected to be relative to the origin of the intersecting vector (origin)
+	// Returns NULL if parallel
+	public static Vec intersection( Vec vec, Ray L ) {
+		System.out.println(vec);
+		System.out.println( L.getPoint() );
+		System.out.println( L.getDir() );
+		
+		Vec V = vec.dir();
+		Vec D = L.getPoint();
+		double cos1 = V.dot(D.dir());
+		
+		Vec T = V.times(D.norm() * cos1);
+		Vec Y = T.minus(L.getPoint());
+		double cos2 = L.getDir().dot(Y.dir());
+		if( cos2 == 0 )
+			return null;
+		
+		double LLenToIntersection = Y.norm() / cos2;
+		
+		return L.getDir().times(LLenToIntersection).add(L.getPoint());
+	}
+	
+	public static class Ray {
+		Vec from;
+		Vec dir;
+		
+		public Ray( Vec from, Vec dir ) {
+			this.from = from;
+			this.dir = dir.normalize();
+		}
+		
+		public Vec getPoint() {
+			return from;
+		}
+		
+		public Vec getDir() {
+			return dir;
+		}
+	}
+	
+	public static void main(String[] args) {
+		
+		Vec a1 = new Vec( new Loc2d(1,1) );
+		Vec a2 = new Vec( new Loc2d(-1, 1) );
+		Vec b1 = new Vec( new Loc2d(2, 2) );
+		Vec b2 = new Vec( new Loc2d(-3, 1) );
+		
+		Vec t = intersection(a2.dir(), new Ray(b1.minus(a1), b2));
+		System.out.println(t);
+	}
 }

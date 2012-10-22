@@ -6,10 +6,10 @@ import util.Vecs.Vec;
 public class Locations {
 	
 	public static class Loc {
-		final protected float[] values;
+		final protected double[] values;
 		
 		public Loc( int degree ) {
-			values = new float[degree]; 
+			values = new double[degree]; 
 		}
 		
 		public Loc( Loc otherLoc ) {
@@ -25,7 +25,7 @@ public class Locations {
 			return 0;
 		}
 
-		public float get(int dimensionIndex) {
+		public double get(int dimensionIndex) {
 			return values[dimensionIndex];
 		}
 		
@@ -35,7 +35,7 @@ public class Locations {
 		
 		public String toString() {
 			StringBuilder sb = new StringBuilder();
-			for( float f : values )
+			for( double f : values )
 				sb.append(f + ", ");
 			if( sb.length() > 0 )
 				sb.setLength(sb.length()-2);
@@ -68,8 +68,8 @@ public class Locations {
 			setY(y);
 		}
 		
-		public float getX() { return get(0); }
-		public float getY() { return get(1); }
+		public double getX() { return get(0); }
+		public double getY() { return get(1); }
 
 		public void setX(float x) { set(0, x); }
 		public void setY(float y) { set(1, y); }
