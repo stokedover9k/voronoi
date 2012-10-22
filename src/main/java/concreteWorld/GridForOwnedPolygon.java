@@ -78,18 +78,28 @@ public class GridForOwnedPolygon {
 	}
 
 	private boolean doesBelongToPolygon(OwnedPolygon polygon){
+		// TODO: took some liberties with this function so it would compile.  Please check.
 		
 		List<Vertex> vertices = polygon.getVertices();
-		int polyX[];
-		int polyY[];
+		int polyX[] = new int[vertices.size()];
+		int polyY[] = new int[vertices.size()];
 		
-		for(int i = 0 ; i< vertices.size();i++){
-			Loc loc = vertices.get(i).getLocation();
+		int i = 0;
+		for( Vertex v : vertices ) {
+//		for(int i = 0 ; i< vertices.size();i++){
+			
+			// this line is expensive!!!
+//			Loc loc = vertices.get(i).getLocation();
+			
+			// added this next line
+			Loc loc = v.getLocation();
 			polyX[i] = (int) loc.get(0);
 			polyY[i] = (int) loc.get(1);
+			// added this next line
+			i++;
 		}
 		
-		return pointInPolygon(vertices.size(), polyX, polyY,  this.location.get(0), this.location.get(1));
+		return pointInPolygon(vertices.size(), polyX, polyY,  (int)this.location.get(0), (int)this.location.get(1));
 	}
 
 	public static List<GridForOwnedPolygon> getGridForPolygon(OwnedPolygon polygon,int width){

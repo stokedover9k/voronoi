@@ -1,6 +1,5 @@
 package util;
 
-import util.Vecs.Vec;
 
 
 public class Locations {
@@ -29,7 +28,7 @@ public class Locations {
 			return values[dimensionIndex];
 		}
 		
-		public void set(int dimensionIndex, float value) {
+		public void set(int dimensionIndex, double value) {
 			values[dimensionIndex] = value;
 		}
 		
@@ -62,7 +61,7 @@ public class Locations {
 	
 	public static class Loc2d extends Loc {
 
-		public Loc2d(float x, float y) {
+		public Loc2d(double x, double y) {
 			super(2);
 			setX(x);
 			setY(y);
@@ -71,8 +70,8 @@ public class Locations {
 		public double getX() { return get(0); }
 		public double getY() { return get(1); }
 
-		public void setX(float x) { set(0, x); }
-		public void setY(float y) { set(1, y); }
+		public void setX(double x) { set(0, x); }
+		public void setY(double y) { set(1, y); }
 		
 	}
 }

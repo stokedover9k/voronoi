@@ -20,7 +20,6 @@ import mesh.Mesh;
 import mesh.Vertex;
 import util.Locations.Loc2d;
 import util.Vecs.Vec;
-import concreteWorld.VoronoiGameField.OwnedPolygon;
 
 public class VoronoiGameField extends Mesh<VoronoiGameField.OwnedPolygon> {
 	
@@ -52,6 +51,11 @@ public class VoronoiGameField extends Mesh<VoronoiGameField.OwnedPolygon> {
 		facesList.add( new LinkedList<Integer>( Arrays.asList( 0, 1, 2, 3 )) );
 		return facesList;
 	}
+	
+	
+//	public OwnedPolygon PlaceStone( Stone stone, Actor owner ) {
+		
+//	}
 	
 	public static class OwnedPolygon extends Face {
 		
