@@ -55,6 +55,11 @@ public class World implements Moderator {
         return getPlayerByNumber(nextPlayerNumber);
     }
     
+    public LinkedList<WorldUpdate> getUpdateSequence()
+    {
+        return updateSequence;
+    }
+
     public Actor getCurrentPlayer()
     {
         return currentPlayer;
