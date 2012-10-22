@@ -110,9 +110,9 @@ public class Vecs {
 	// L's location is expected to be relative to the origin of the intersecting vector (origin)
 	// Returns NULL if parallel
 	public static Vec intersection( Vec vec, Ray L ) {
-		System.err.println(vec);
-		System.err.println( L.getPoint() );
-		System.err.println( L.getDir() );
+//		System.err.println(vec);
+//		System.err.println( L.getPoint() );
+//		System.err.println( L.getDir() );
 		
 		Vec V = vec.dir();
 		Vec D = L.getPoint();

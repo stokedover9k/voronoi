@@ -57,6 +57,7 @@ public class Face {
 		return edge;
 	}
 	
+	// The vertices from and to are corresponding to the from and to of the OLD face
 	public Face cut(Vertex fromVertex, Vertex toVertex, Face newFace) {
 		Edge fromEdge = null, toEdge = null;
 		for( Edge edge : getEdges() ) {
@@ -72,6 +73,7 @@ public class Face {
 	}	
 	
 	// the two edges point to vertices used to make the cut
+	// These edges are the from and to edges corresponding to the OLD face, not old
 	public Face cut(Edge edgeFrom, Edge edgeTo, Face newFace) {
 		
 		Edge newEdge = new Edge(this, edgeTo.getVertex(), null, edgeTo.getNext());
@@ -83,6 +85,8 @@ public class Face {
 		
 		for( Edge edge = newFace.getEdge().getNext(); edge != newFace.getEdge(); edge = edge.getNext() )
 			edge.setFace(newFace);
+		
+		setEdge(newEdge);
 		
 		return newFace;
 	}

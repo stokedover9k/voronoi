@@ -10,7 +10,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import mesh.Edge;
@@ -91,14 +90,154 @@ public class VoronoiGameField extends Mesh<OwnedPolygon> {
 		Vertex v1 = e1.split( new Vertex( intersections.get(e1) ) );
 		Vertex v2 = e2.split( new Vertex( intersections.get(e2) ) );
 		
-		System.err.println( "Intersects: " + v1 + " and " + v2 );
+		Ray l = new Ray(newStone, midpoint.minus(newStone));
+		if( isLeftOrRight( l, v1.getLocation() ) > 0 ) {  // if v1 is on the left ---> swap v1 and v2
+			Vertex tmp = v1;
+			v1 = v2;
+			v2 = tmp;
+		}
 		
-		OwnedPolygon newPolygon = new OwnedPolygon(null, null, newStone); 
-		if( polygon.cut(v1, v2, newPolygon) != newPolygon ) {
+		System.err.println("cut from and to:  " + v2 + " " + v1);
+		
+		OwnedPolygon newPolygon = new OwnedPolygon(null, null, newStone);
+		
+		if( polygon.cut(v2, v1, newPolygon) != newPolygon ) {
 			throw new RuntimeException( "Was supposed to return newPolygon" );
 		}
+
 		registerFace(newPolygon);
+		System.err.println("registerd new face: " + newPolygon);
+		System.err.println("while cutting this face: " + polygon);
+		
+		validate();
+		
+		/*
+		 *  current = start
+		 *  
+		 *  while not cut to v1
+		 *  	
+		 *  	if next.opp.face = null
+		 *  		move on
+		 *  	
+		 *  	if next.opp.face != start.prev.opp.face
+		 *  		cut to new v3
+		 *  	else
+		 *  		cut to v1
+		 *  
+		 *  	if opp.face != null
+		 *  		cut from v3
+		 *  	else
+		 *  		cut from new v2
+		 */
+		
+		// find edge which points to v2
+		Edge startEdge = null;
+		for( Edge edge : newPolygon.getEdges() )
+			if( edge.getVertex() == v2 ) {
+				startEdge = edge;
+				break;
+			}
+		
+		Edge previousToStart = startEdge.getPrevious();
+		Edge current = startEdge;
+		Vertex v3 = v2;
+		
+		do {
+			
+			if( current.getNext() == startEdge ) {
+				break;
+			}
+			
+			if( current.getNext().getOpposite().getFace() == null ) {
+				current = current.getNext();
+				continue;
+			}
+			
+			Face faceToCut = current.getNext().getOpposite().getFace();
+			System.err.println("cutting face: " + faceToCut.getEdge());
+			Vec stoneToStone = ((OwnedPolygon)faceToCut).getStone().minus(newStone); 
+			Ray stoneToStoneRay = new Ray( newStone, stoneToStone.dir() );
+			Vec cutDirection = Vecs.perpendicular(stoneToStone);
+			intersections = faceToCut.getIntersections( new Ray(v2.getLocation(), cutDirection) );
+			
+			if( current.getOpposite().getFace() != null ) {
+				// cut to old v3
+				System.out.println("v2 = old v3");
+				v2 = v3;
+				System.out.println(current);
+			}
+			else {
+				// cut to new v2
+				System.out.println("v2 = new v2");
+				Map.Entry<Edge, Vec> cutFrom = getRightMost( intersections, stoneToStoneRay );
+				v2 = cutFrom.getKey().split( new Vertex(cutFrom.getValue()) );
+			}
+			
+			if( current.getNext().getOpposite().getFace() != previousToStart.getOpposite().getFace() ) {
+				// find new v2
+				Map.Entry<Edge, Vec> cutTo = getLeftMost( intersections, stoneToStoneRay );
+				v3 = cutTo.getKey().split( new Vertex(cutTo.getValue()) );
+			}
+			else {
+				v3 = v1;
+			}
+			
+			OwnedPolygon conqueredFromCut = new OwnedPolygon(null, owner, null);
+			System.out.println( "cutting from and to: " + v3 + " " + v2 );
+			Face newFace = faceToCut.cut( v3, v2, conqueredFromCut );
+			assert newFace == conqueredFromCut : "unexpected face returned from cut";
+			
+			Face removedFace = removeEdge( current.getNext() );
+			System.err.println("removed during insertion: " + removedFace);
+		} while( v3 != v1 );
+		
 		return newPolygon;
+	}
+	
+	private Map.Entry<Edge, Vec> getLeftMost(Map<Edge, Vec> points, Ray relativeTo) {
+		double max = Double.NEGATIVE_INFINITY;
+		Map.Entry<Edge, Vec> leftMost = null;
+		for( Map.Entry<Edge, Vec> entry : points.entrySet() ) {
+			double val = isLeftOrRight( relativeTo, entry.getValue() );
+			if( val > max ) {
+				max = val;
+				leftMost = entry;
+			}
+		}
+		return leftMost;
+	}
+	
+	private Map.Entry<Edge, Vec> getRightMost(Map<Edge, Vec> points, Ray relativeTo) {
+		double min = Double.POSITIVE_INFINITY;
+		Map.Entry<Edge, Vec> leftMost = null;
+		for( Map.Entry<Edge, Vec> entry : points.entrySet() ) {
+			double val = isLeftOrRight( relativeTo, entry.getValue() );
+			if( val < min ) {
+				min = val;
+				leftMost = entry;
+			}
+		}
+		return leftMost;
+	}
+
+	// finds the determinant of the vector provided by the ray and the vector m
+	// returns 0 if m is on the line given by l.
+	// returns > 0 if left, < 0 if right
+	private static double isLeftOrRight( Ray l, Vec m ) {
+		assert l.getPoint().getDegree() == 2 && m.getDegree() == 2 : "Invalid vectors";
+		
+		Vec a = l.getPoint();
+		Vec b = a.plus(l.getDir());
+		
+		double ax = a.get(0);
+		double ay = a.get(1);
+		double bx = b.get(0);
+		double by = b.get(1);
+		double  x = m.get(0);
+		double  y = m.get(1);
+		
+		double det = (bx - ax) * (y - ay) - (by - ay) * (x - ax);
+		return det;
 	}
 
 	
@@ -106,6 +245,7 @@ public class VoronoiGameField extends Mesh<OwnedPolygon> {
 	
 	
 	public static void main(String[] args) {
+		
 		VoronoiGameField game = new VoronoiGameField();
 		
 		System.out.println(game);
@@ -113,9 +253,11 @@ public class VoronoiGameField extends Mesh<OwnedPolygon> {
 		game.getFaces().iterator().next().setStone(new Stone(1,1));
 		
 		game.placeStone(new Stone(3, 5), null);
-		
 		game.validate();
+		System.out.println(game);
 		
+		game.placeStone(new Stone(5, 3), null);
+		game.validate();
 		System.out.println(game);
 	}
 }

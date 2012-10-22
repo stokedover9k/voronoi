@@ -159,16 +159,20 @@ public class Mesh<F extends Face> {
 	// Removes the edge, thus extending the face it is associated with.
 	// @return: The deleted face on the other side of the edge.
 	public Face removeEdge( Edge edge ) {
+		Face removedFace = null;
 		if( edge.getFace() == null )
-			return removeBoundaryEdge( edge );
+			removedFace = removeBoundaryEdge( edge );
 		if( edge.getOpposite().getFace() == null )
-			return removeBoundaryEdge( edge.getOpposite() );
+			removedFace = removeBoundaryEdge( edge.getOpposite() );
 		
-		return removeInnerEdge( edge );
+		removedFace = removeInnerEdge( edge );
+		
+		faces.remove(removedFace);
+		return removedFace;
 	}
 
 	// Removes the edge, thus extending the null-face it is associated with.
-	// @return: the deleted face onthe other side of the edge.
+	// @return: the deleted face on the other side of the edge.
 	private Face removeBoundaryEdge( Edge edge ) {
 		if( edge.getFace() != null )
 			throw new IllegalArgumentException("The edge is not a boundary edge");
@@ -216,6 +220,14 @@ public class Mesh<F extends Face> {
 		
 		// in case the face was pointing to this edge
 		edge.getFace().setEdge( edge.getNext() );
+		
+		Edge checkEdge = edge.getNext();
+		for( Edge counting : edge.getFace().getEdges() ) {
+			if( checkEdge.getNext().getOpposite().getFace() == edge.getFace() ) {
+				checkEdge.setNext( checkEdge.getNext().getOpposite().getNext() );
+				edge.getFace().setEdge( checkEdge );
+			}
+		}
 		
 		return conqueredFace;
 	}
