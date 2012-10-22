@@ -24,7 +24,7 @@ import util.Vecs;
 import util.Vecs.Ray;
 import util.Vecs.Vec;
 
-public class VoronoiGameField extends Mesh<VoronoiGameField.OwnedPolygon> {
+public class VoronoiGameField extends Mesh<OwnedPolygon> {
 	
 	public VoronoiGameField(Map<Integer, Vertex> vertexMapping,
 			Collection<LinkedList<Integer>> facesList,
@@ -73,7 +73,6 @@ public class VoronoiGameField extends Mesh<VoronoiGameField.OwnedPolygon> {
 	}
 	
 	private OwnedPolygon insertStoneIntoPolygon(OwnedPolygon polygon, Stone stone, Actor owner) {
-		// TODO Auto-generated method stub
 		
 		Vec newStone = stone.toVec();
 		Vec midpoint = newStone.midpointTo(polygon.getStone());
@@ -102,58 +101,7 @@ public class VoronoiGameField extends Mesh<VoronoiGameField.OwnedPolygon> {
 		return newPolygon;
 	}
 
-	public static class OwnedPolygon extends Face {
-		
-		Actor owner = null;
-		Vec stone = null;
-		List<GridForOwnedPolygon> grids;
-
-		public OwnedPolygon(Edge edge, Actor owner, Vec stone) {
-			super(edge);
-			this.owner = owner;
-			this.stone = stone;
-		}
-		
-		public OwnedPolygon(Edge edge, Actor owner) {
-			this( edge, owner, null );
-		}
-		
-		public Actor getOwner() {
-			return owner;
-		}
-		
-		public Vec getStone() {
-			return stone;
-		}
-		
-		public void setOwner(Actor owner) {
-			this.owner = owner;
-		}
-
-		public void setStone(Stone stone) {
-			this.stone = new Vec( new Loc2d((double)stone.x, (double)stone.y));
-		}
-	}
-
-	public static class OwnedPolygonFactory implements Faces.Factory<OwnedPolygon> {
-		
-		final Actor owner;
-
-		public OwnedPolygonFactory(Actor owner) {
-			this.owner = owner;
-		}
-
-		@Override
-		public OwnedPolygon createFace(Edge edge) {
-			return new OwnedPolygon(edge, owner);
-		}
-
-		@Override
-		public OwnedPolygon cloneFace(OwnedPolygon face) {
-			return new OwnedPolygon(face.getEdge(), face.getOwner());
-		}
-
-	}
+	
 	
 	
 	

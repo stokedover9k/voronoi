@@ -6,7 +6,7 @@ import java.util.List;
 import mesh.Edge;
 import mesh.Vertex;
 
-import concreteWorld.VoronoiGameField.OwnedPolygon;
+import concreteWorld.OwnedPolygon;
 import util.Locations.Loc;
 import util.Locations.Loc2d;
 import util.Vecs.Vec;

@@ -5,7 +5,7 @@ import java.util.List;
 
 import mesh.Vertex;
 import util.Vecs.Vec;
-import concreteWorld.VoronoiGameField.OwnedPolygon;
+import concreteWorld.OwnedPolygon;
 
 public class Polygons {
 	
