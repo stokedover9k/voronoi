@@ -18,7 +18,7 @@ import util.Vecs.Vec;
 
 public class Mesh<F extends Face> {
 	
-	Collection<F> faces = new HashSet<F>();
+	private Collection<F> faces = new HashSet<F>();
 	
 	
 	
@@ -222,6 +222,14 @@ public class Mesh<F extends Face> {
 	
 	public String toString() {
 		return faces.toString();
+	}
+	
+	protected Collection<F> getFaces() {
+		return faces;
+	}
+	
+	protected void registerFace(F newFace) {
+		faces.add(newFace);
 	}
 	
 	public boolean validate() {

@@ -1,7 +1,12 @@
 package mesh;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+
+import util.Vecs.Ray;
+import util.Vecs.Vec;
 
 public class Face {
 	Edge edge;
@@ -80,6 +85,20 @@ public class Face {
 			edge.setFace(newFace);
 		
 		return newFace;
+	}
+	
+	public Map<Edge, Vec> getIntersections(Ray intersectingRay) {
+		Map<Edge, Vec> intersects = new HashMap<Edge, Vec>();
+		for( Edge edge : getEdges() ) {
+			Vec intersect = edge.getIntersect( intersectingRay );
+			if( intersect != null )
+				intersects.put(edge, intersect);
+		}
+		
+		if( intersects.size() > 2 ) {
+			throw new RuntimeException("Too many intersects.");
+		}
+		return intersects;
 	}
 	
 	public String toString() {

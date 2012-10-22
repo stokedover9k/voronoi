@@ -1,5 +1,8 @@
 package gameworld;
 
+import util.Locations.Loc2d;
+import util.Vecs.Vec;
+
 /*
  * Stone is the "point-sized stone" as described by the Voronoi game description.
  * These are what we use to make each move.
@@ -30,4 +33,8 @@ public class Stone implements Comparable<Stone>
     {
         return "<" + x + "," + y + ">";
     }
+
+	public Vec toVec() {
+		return new Vec( new Loc2d((double)x, (double)y) );
+	}
 }

@@ -100,8 +100,8 @@ public class Vecs {
 		if( vec.dir().dot(temp.normalize()) < 1 ) ;
 		else temp.values[1] += 1;
 		
-		Vec a = vec.times(vec.dot(temp));
-		return temp.subtract(a);
+		Vec a = vec.dir().scale(vec.dir().dot(temp.normalize()));
+		return temp.subtract(a).normalize();
 	}
 	
 	
@@ -110,9 +110,9 @@ public class Vecs {
 	// L's location is expected to be relative to the origin of the intersecting vector (origin)
 	// Returns NULL if parallel
 	public static Vec intersection( Vec vec, Ray L ) {
-		System.out.println(vec);
-		System.out.println( L.getPoint() );
-		System.out.println( L.getDir() );
+		System.err.println(vec);
+		System.err.println( L.getPoint() );
+		System.err.println( L.getDir() );
 		
 		Vec V = vec.dir();
 		Vec D = L.getPoint();

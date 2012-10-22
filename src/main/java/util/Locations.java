@@ -23,6 +23,15 @@ public class Locations {
 			}
 			return 0;
 		}
+		
+		public boolean equals(Object o) {
+			Loc loc = (Loc)o;
+			int degree = Math.min(values.length, loc.values.length);
+			for( int i = 0; i < degree; i++ ) {
+				if( values[i] != loc.values[i] )  return false;
+			}
+			return true;
+		}
 
 		public double get(int dimensionIndex) {
 			return values[dimensionIndex];

@@ -1,5 +1,9 @@
 package mesh;
 
+import util.Vecs;
+import util.Vecs.Ray;
+import util.Vecs.Vec;
+
 
 public class Edge {
 	Face face;
@@ -86,5 +90,31 @@ public class Edge {
 	
 	public String toString() {
 		return "E{" + (opposite == null ? "null" : opposite.vertex) + " -> " + vertex + "}";
+	}
+
+	public Vec getIntersect(Ray intersectingRay) {
+		Vec a = getVertex().getLocation();
+		Vec b = getOpposite().getVertex().getLocation();
+		// Note, that we move point "a" to be relative to the intersecting ray's origin
+		Ray edgeAsRay = new Ray( a.minus(intersectingRay.getPoint()), b.minus(a).normalize() );
+		
+		// the last "add" is to return the point to the original coordinate system (from being relative to intersecting ray)
+		Vec intersection = Vecs.intersection(intersectingRay.getDir(), edgeAsRay).add(intersectingRay.getPoint());
+		if( intersection == null )  return null;
+		
+		// only checking against one vertex because the previous edge should take care of the other
+		if( intersection.equals(a) )  return intersection;
+		
+		// now check if we've hit within the edge.  Imagine points on a line (3 cases):
+		// 1)         a --- T --- b
+		// 2)  T' --- a --------- b
+		// 3)         a --------- b --- T'
+		// Now consider lengths of vectors: a->T, b->T, and (a->T + b->T)
+		Vec aT = intersection.minus(a);
+		Vec bT = intersection.minus(b);
+		if( aT.plus(bT).norm() < aT.norm() + bT.norm() )
+			return intersection;
+		else
+			return null;
 	}
 }
