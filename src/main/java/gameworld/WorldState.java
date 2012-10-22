@@ -1,5 +1,7 @@
 package gameworld;
 
+import gameworld.Actor.Team;
+
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -8,11 +10,13 @@ public class WorldState implements Comparable<WorldState> {
 	Set<Stone> redStones = new TreeSet<Stone>();
 	Set<Stone> blueStones = new TreeSet<Stone>();
 	
-	protected Set<Stone> getStones(Actor player) {
-		if( player == World.getPlayer1() )  return redStones;
-		if( player == World.getPlayer2() )  return blueStones;
-		throw new IllegalArgumentException("wrong Actor provided");
-	}
+    protected Set<Stone> getStones(Actor player)
+    {
+        if (player.team() == Team.RED)
+            return redStones;
+        else
+            return blueStones;
+    }
 	
 	// applies the update to the current state and returns a .Create.confirm() update or
 	// a .Create.fail() update depending on whether it succeeds or fails.

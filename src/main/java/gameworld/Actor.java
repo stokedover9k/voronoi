@@ -17,6 +17,8 @@ package gameworld;
  */
 public interface Actor {
 	
+    public enum Team { RED, BLUE }
+    
 	// The Actor is placed into the given state.
 	public void receiveState( WorldState worldState );
 	
@@ -29,4 +31,12 @@ public interface Actor {
 	// accepted (a.k.a. performed), the Actor will be notified about it via 
 	// Actor.receiveUpdate( WorldUpdate worldUpdate ) : void
 	public WorldUpdate proposeAction();
+	
+	// returns team which the player is on
+	public Team team();
+	
+	// returns turn number of the player (what order they take their turn in)
+	public int number();
+	
+	public String toString();
 }

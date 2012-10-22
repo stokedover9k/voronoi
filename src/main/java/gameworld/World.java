@@ -1,6 +1,10 @@
 package gameworld;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
+
+import concreteWorld.Main;
 
 /*
  * World is a SINGLETON implementation of Moderator. It maintains two Actor players,
@@ -12,62 +16,49 @@ public class World implements Moderator {
 	
 	public static final int WIDTH = 1000;
 	public static final int HEIGHT = 1000;
-
 	private static World world = new World();
 	
-	private Actor player1;
-	private Actor player2;	
 	private WorldState worldState = new WorldState();
-	
+    private List<Actor> players = new ArrayList<Actor>();
 	private LinkedList<WorldUpdate> updateSequence = new LinkedList<WorldUpdate>();
 	
-	private Actor currentPlayer = null;
-	private Actor warnedPlayer = null;
+	private Actor currentPlayer;
+	private Actor warnedPlayer;
 	
 	private World() { }
 	
 	public static World getInstance() {
-		if( world == null )
-			// use initWorld to initialize world with players first
-			throw new RuntimeException("World has not been initialized");
 		return world;
 	}
 	
-	// initialize the world with two players
-	public static void initWorld(Actor player1, Actor player2) {
-		if( player1 == player2 ) {
-			throw new IllegalArgumentException("cannot have same player for both roles");
-		}
-		
-		world.player1 = player1;
-		world.player2 = player2;
-		world.currentPlayer = player1;
+	public void addPlayer(Actor player) {
+	    if(player.number() == 1) {
+	        currentPlayer = player;
+	    }
+	    players.add(player);
 	}
 	
-	public static Actor getPlayer1() {
-		return world.player1;
-	}
+    public Actor getPlayerByNumber(int playerNumber)
+    {
+        for(Actor a : this.players) {
+            if(a.number() == playerNumber)
+                return a;
+        }
+        throw new RuntimeException("Player number invalid " + playerNumber);
+    }
 	
-	public static Actor getPlayer2() {
-		return world.player2;
-	}
-	
-	public static Actor getOpponentOf(Actor player) {
-		if( player == getPlayer1() )  return getPlayer2();
-		if( player == getPlayer2() )  return getPlayer1();
-		throw new IllegalArgumentException("No such player");
-	}
-	
-	@Override
-	public WorldUpdate receiveOmnipotentUpdate(WorldUpdate worldUpdate) {
-		return world.worldState.applyUpdate(worldUpdate);
-	}
-
-	@Override
-	public WorldState receiveOmnipotentState(WorldState worldState) {
-		world.worldState = worldState;
-		return worldState;
-	}
+    public Actor getNextPlayer(Actor player)
+    {
+        int nextPlayerNumber = player.number() + 1;
+        if (nextPlayerNumber > Main.GAME_PARAMS.numPlayers) 
+            nextPlayerNumber = 1;
+        return getPlayerByNumber(nextPlayerNumber);
+    }
+    
+    public Actor getCurrentPlayer()
+    {
+        return currentPlayer;
+    }
 
 	@Override
 	public WorldUpdate reportLastUpdate() {
@@ -80,40 +71,55 @@ public class World implements Moderator {
 	}
 
 	@Override
-	public void continueGame() {
-		
-		WorldUpdate action = currentPlayer.proposeAction();
-		WorldUpdate result = worldState.applyUpdate(action);
-		
-		if( result.isConfirm() )
-		{
-			updateSequence.add(action);
-			warnedPlayer = null;
-			
-			// inform the players of world change
-			player1.receiveUpdate(action);
-			player2.receiveUpdate(action);
-			
-			currentPlayer = World.getOpponentOf(currentPlayer);
-		}
-		else  // failed to apply action
-		{
-			if( warnedPlayer != currentPlayer )      //first offense
-			{
-				currentPlayer.receiveUpdate(result);
-				currentPlayer.receiveState(worldState);
-				warnedPlayer = currentPlayer;
-			}
-			else                                     //second offense
-			{
-				currentPlayer.receiveUpdate(WorldUpdate.Create.loss());
-				currentPlayer = World.getOpponentOf(currentPlayer);
-				currentPlayer.receiveUpdate(WorldUpdate.Create.win());
-				
-				updateSequence.add(WorldUpdate.Create.loss());
-			}
-		}
-		
+    public void continueGame()
+    {
+        WorldUpdate update = currentPlayer.proposeAction();
+        System.err.println(currentPlayer.toString() + " selects move " + update.toString());
+        WorldUpdate result = worldState.applyUpdate(update);
+
+        if (result.isConfirm())
+        {
+            System.err.println("Update approved.");
+            updateSequence.add(update);
+            notifyAllPlayers(update);
+            currentPlayer = getNextPlayer(currentPlayer);
+            warnedPlayer = null;
+        }
+        else
+        {
+            System.err.println("Update failed.");
+            if (warnedPlayer != currentPlayer) // first offense
+            {
+                currentPlayer.receiveUpdate(result);
+                currentPlayer.receiveState(worldState);
+                warnedPlayer = currentPlayer;
+            }
+            else // second offense
+            {
+                currentPlayer.receiveUpdate(WorldUpdate.Create.loss());
+                currentPlayer = getNextPlayer(currentPlayer);
+                currentPlayer.receiveUpdate(WorldUpdate.Create.win());
+
+                updateSequence.add(WorldUpdate.Create.loss());
+            }
+        }
+    }
+	
+	private void notifyAllPlayers(WorldUpdate update) {
+	  for(Actor a : this.players) {
+	      a.receiveUpdate(update);
+	  }   
 	}
+	
+	@Override
+    public WorldUpdate receiveOmnipotentUpdate(WorldUpdate worldUpdate) {
+        return world.worldState.applyUpdate(worldUpdate);
+    }
+
+    @Override
+    public WorldState receiveOmnipotentState(WorldState worldState) {
+        world.worldState = worldState;
+        return worldState;
+    }
 	
 }

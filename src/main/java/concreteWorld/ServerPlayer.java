@@ -1,48 +1,86 @@
 package concreteWorld;
 
 import gameworld.Actor;
+import gameworld.Stone;
 import gameworld.WorldState;
 import gameworld.WorldUpdate;
 
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class ServerPlayer implements Actor
 {
-    private final String     name;
-    private final Scanner    scan  = new Scanner(System.in);
-    private WorldState state = new WorldState();
+    final String  name;
+    final int     playerNumber;
+    final Team    team;
 
-    public ServerPlayer(String name)
+    private final Scanner    scan  = new Scanner(System.in);
+
+    public ServerPlayer(String name, int playerNumber, Team team)
     {
         this.name = name;
+        this.playerNumber = playerNumber;
+        this.team = team;
     }
 
     @Override
-    public void receiveState(WorldState worldState)
+    public Team team()
     {
-        this.state = worldState;
-        System.err.println(name + ": State received");
+        return team;
     }
-
+    
     @Override
-    public void receiveUpdate(WorldUpdate worldUpdate)
+    public int number()
     {
-        if (this.state.applyUpdate(worldUpdate) == null) 
-            throw new RuntimeException(name + ": could not apply state");
-        System.err.println(name + ": applied update successfully");
+        return playerNumber;
     }
 
     @Override
     public WorldUpdate proposeAction()
     {
-        WorldUpdate u = new WorldUpdate(WorldUpdate.Type.PLACE_STONE, this);
-        if (scan.hasNextLine())
+        Stone s = null;
+        System.err.println("Waiting for server to report opponent move.");
+        while (true)
         {
-            String input = scan.nextLine();
-            System.err.println("Got from server: " + input);
-            // TODO - take the first two tokens and build update
-        }
-        return u;
+            //ex. 40,126 874,264 618,561 6,738 795,679 | 494767.00191,505232.998
+            String input = null;
+            try
+            {
+                input = scan.nextLine();
+            }
+            catch (NoSuchElementException e)
+            {
+                System.exit(0); // game over
+            }
+            
+            if(input.isEmpty()) 
+                continue; // ignore empty messages from server
+            
+            System.err.println("Raw message from server " + input);
+            String[] message = input.split("\\|");
+            String[] coordinates = message[0].trim().split(" ");
+            String[] stone = coordinates[0].trim().split(",");
+            s = new Stone (
+              Integer.parseInt(stone[0]),
+              Integer.parseInt(stone[1])
+            );
+            System.err.println("Stone from server, " + s.toString());
+            break;
+        } 
+        
+        return new WorldUpdate(WorldUpdate.Type.PLACE_STONE, this, s);
     }
+
+    @Override
+    public String toString() {
+        return "name=" + name + ",number=" + playerNumber + ",team=" + team;
+    }
+    
+    @Override
+    public void receiveState(WorldState worldState) { }
+
+    @Override
+    public void receiveUpdate(WorldUpdate worldUpdate) { }
+
 
 }

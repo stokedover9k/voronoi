@@ -9,15 +9,19 @@ import util.Vecs.Vec;
  */
 public class Stone implements Comparable<Stone>
 {
+    public int x;
+    public int y;
 
     public Stone(int x, int y)
     {
         this.x = x;
         this.y = y;
     }
-
-    public final int x;
-    public final int y;
+    
+    public Stone(Stone s)
+    {
+        this(s.x, s.y);
+    }
 
     public int compareTo(Stone s)
     {
