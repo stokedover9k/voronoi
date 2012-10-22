@@ -8,26 +8,28 @@ import gameworld.WorldUpdate;
 
 public class RandomPlayer implements Actor {
 	
-	final String name;
+    final String name;
+    final int    playerNumber;
+    final Team   team;
+    
+	public RandomPlayer(String name, int playerNumber, Team team)
+    {
+        this.name = name;
+        this.playerNumber = playerNumber;
+        this.team = team;
+    }
 	
-	WorldState state = new WorldState();
-	
-	public RandomPlayer(String name) {
-		this.name = name;
-	}
-
-	@Override
-	public void receiveState(WorldState worldState) {
-		this.state = worldState;
-		System.err.println(name + ": State received");
-	}
-
-	@Override
-	public void receiveUpdate(WorldUpdate worldUpdate) {
-		if( this.state.applyUpdate(worldUpdate) == null)
-			throw new RuntimeException(name + ": could not apply state");
-		System.err.println(name + ": applied update successfully");
-	}
+    @Override
+    public Team team()
+    {
+        return team;
+    }
+    
+    @Override
+    public int number()
+    {
+        return playerNumber;
+    }
 
 	@Override
 	public WorldUpdate proposeAction() {
@@ -36,5 +38,11 @@ public class RandomPlayer implements Actor {
 		int y = (int) (World.HEIGHT * Math.random());
 		return new WorldUpdate(WorldUpdate.Type.PLACE_STONE, this, new Stone(x,y));
 	}
+
+    @Override
+    public void receiveState(WorldState worldState) { }
+
+    @Override
+    public void receiveUpdate(WorldUpdate worldUpdate) { }
 
 }

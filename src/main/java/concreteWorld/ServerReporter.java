@@ -22,7 +22,7 @@ public class ServerReporter implements Reporter
         WorldUpdate u = moderator.reportLastUpdate();
         if (u.getActor() == player)
         {
-            System.out.println(u.getStone().x + "," + u.getStone().y);
+            System.out.println(u.getStone().x + "," + u.getStone().y + " \n");
         }
         
         return u;

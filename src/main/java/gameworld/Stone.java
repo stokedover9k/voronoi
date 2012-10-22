@@ -15,9 +15,16 @@ public class Stone implements Comparable<Stone>
         this.x = x;
         this.y = y;
     }
+    
+    public Stone(int x, int y, int playerNumber)
+    {
+        this(x,y);
+        this.playerNumber = playerNumber;   
+    }
 
     public final int x;
     public final int y;
+    public int playerNumber;
 
     public int compareTo(Stone s)
     {

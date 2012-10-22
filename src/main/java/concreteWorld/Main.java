@@ -1,26 +1,37 @@
 package concreteWorld;
 
 import gameworld.Actor;
+import gameworld.Actor.Team;
 import gameworld.Reporter;
 import gameworld.World;
+import concreteWorld.Main.GameParams.Mode;
 
 public class Main {
 
-	public static void main(String[] args) {
+    public static GameParams GAME_PARAMS;
+    
+    //args = #STONES #PLAYERS PLAYER# MODE(M=MELEE,T=TWO_PLAYER)
+	public static void main(String[] args) 
+	{
+	    GAME_PARAMS = parseParams(args);
+	    World world = World.getInstance();
 	    
-        int numStones = getNumStones(args);
-	    
-	    System.out.println("rky");
-	    
-		Actor player1 = new RandomPlayer("Timmy-1");
-		Actor player2 = new RandomPlayer("Ricky-2");
-		World.initWorld( player1, player2 );
-		World world = World.getInstance();
-		
+        Actor us = new RandomPlayer (
+                "rky", 1, Team.RED
+        );
+        
+        Actor them = new RandomPlayer (
+                "opponent", 2, Team.BLUE
+        );
+        
+        // Add players in order they will play
+        world.addPlayer(us);
+        world.addPlayer(them);
+        
 		Reporter stdErrReporter = new StdOutReporter(world);
-		Reporter serverReporter = new ServerReporter(world, player1);
+		Reporter serverReporter = new ServerReporter(world, us);
 		
-		for(int i = 0 ; i < numStones*2 ; ++i)
+		for(int i = 0 ; i < GAME_PARAMS.numStones*2 ; ++i)
 		{
 			world.continueGame();
 			stdErrReporter.reportUpdateToViewer();
@@ -33,24 +44,69 @@ public class Main {
 			}
 		}
 	}
+	
+	public static class GameParams
+    {
+        public enum Mode { TWO_PLAYER, MELEE }
 
-    private static int getNumStones(String[] args)
+        public final int    numPlayers;
+        public final int    numStones;
+        public final int    playerNumber;
+        public final Mode   mode;
+
+        public GameParams(int numStones, int numPlayers, int playerNumber, Mode mode)
+        {
+            this.numPlayers = numPlayers;
+            this.numStones = numStones;
+            this.playerNumber = playerNumber;
+            this.mode = mode;
+        }
+    }
+	
+    private static GameParams parseParams(String[] args)
     {
         int numStones = 0;
+        int numPlayers = 0;
+        int playerNum = 0;
+        Mode mode = null;
         try
         {
-            if (args.length != 1)
+            if (args.length != 4)
             {
                 throw new Exception();
             }
             numStones = Integer.parseInt(args[0]);
+            numPlayers = Integer.parseInt(args[1]);
+            playerNum = Integer.parseInt(args[2]);
+            if (args[3].equals("M"))
+            {
+                mode = Mode.MELEE;
+            }
+            else if (args[3].equals("T"))
+            {
+                mode = Mode.TWO_PLAYER;
+            }
+            else
+            {
+                throw new Exception("Invalid game mode.");
+            }
         }
         catch (Exception e)
         {
-            System.err.println("Must provide number of stones.");
+            System.err.println(e.getMessage());
+            usage(args);
             System.exit(-1);
         }
-        return numStones;
+
+        return new GameParams(numStones, numPlayers, playerNum, mode);
+    }
+    
+    private static void usage(String[] args)
+    {
+        String argStr = "";
+        for(String a : args) argStr += a;
+        System.err.println("Invalid/missing arguments. " + argStr);
+        System.err.println("\tusage: java -jar voronoi-1.0.0.jar #STONES #PLAYERS PLAYER# MODE(M=MELEE,T=TWO_PLAYER)");
     }
 
 }
