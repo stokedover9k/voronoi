@@ -17,13 +17,13 @@ public class Main {
 	    GAME_PARAMS = parseParams(args);
 	    World world = World.getInstance();
 	    
-	    Actor us = new RandomPlayer (
-                "rky", 
-                GAME_PARAMS.playerNumber == 1 ? 1 : 2, 
-                GAME_PARAMS.playerNumber == 1 ? Team.RED : Team.BLUE
-        );
+	    Actor us = new SymetricPlayer (
+	                "rky", 
+	                GAME_PARAMS.playerNumber == 1 ? 1 : 2, 
+	                GAME_PARAMS.playerNumber == 1 ? Team.RED : Team.BLUE 
+	    );
 	    
-	    System.err.println("Created ourselves as a random player. " + us.toString());
+	    System.err.println("Created ourselves as a symetric player. " + us.toString());
         
         Actor them = new ServerPlayer (
                 "them", 

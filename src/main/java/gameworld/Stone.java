@@ -9,6 +9,8 @@ import util.Vecs.Vec;
  */
 public class Stone implements Comparable<Stone>
 {
+    public int x;
+    public int y;
 
     public Stone(int x, int y)
     {
@@ -16,15 +18,10 @@ public class Stone implements Comparable<Stone>
         this.y = y;
     }
     
-    public Stone(int x, int y, int playerNumber)
+    public Stone(Stone s)
     {
-        this(x,y);
-        this.playerNumber = playerNumber;   
+        this(s.x, s.y);
     }
-
-    public final int x;
-    public final int y;
-    public int playerNumber;
 
     public int compareTo(Stone s)
     {
