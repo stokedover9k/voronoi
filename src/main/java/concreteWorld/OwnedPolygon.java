@@ -17,6 +17,8 @@ public  class OwnedPolygon extends Face {
 	Actor owner = null;
 	Vec stone = null;
 	List<GridForOwnedPolygon> grids;
+	double weight;//was suppose to represent weight for evaluation but now 
+	//represents area
 
 	public OwnedPolygon(Edge edge, Actor owner, Vec stone) {
 		super(edge);
@@ -42,6 +44,14 @@ public  class OwnedPolygon extends Face {
 
 	public void setStone(Stone stone) {
 		this.stone = new Vec( new Loc2d((double)stone.x, (double)stone.y));
+	}
+
+	public double getWeight() {
+		return weight;
+	}
+
+	public void setWeight(double weight) {
+		this.weight = weight;
 	}
 }
 

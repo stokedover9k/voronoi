@@ -59,4 +59,10 @@ public class Polygons {
 		}
 		
 	}
+
+	static TriangularizerEvaluator evaluator = new TriangularizerEvaluator(new WeightedGaussianTriangleEvaluator());
+	
+	public static double getArea(OwnedPolygon polygon) {
+		 return evaluator.evaluate(polygon);
+	}
 }
