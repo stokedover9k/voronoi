@@ -9,7 +9,7 @@ import parameters.ParameterFactory;
 
 public class EvaluateGameField {
 
-	public static OwnedPolygon getBestPolygonForPlacingStone(VoronoiGameField gamefield,List<Actor> team){
+	public static OwnedPolygon getBestPolygonForPlacingStone(VoronoiGameField gamefield){
 		
 		OwnedPolygon bestPolygon = null;
 		
@@ -19,7 +19,7 @@ public class EvaluateGameField {
 		}
 		
 		//compute the paramters for all polygons and store in weight
-		List<Parameter> params = ParameterFactory.getParameters(gamefield,team);
+		List<Parameter> params = ParameterFactory.getParameters(gamefield);
 		for(Parameter param : params){
 			param.evaluate(); // the result is stored in weights for all polygons
 		}

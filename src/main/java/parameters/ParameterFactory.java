@@ -10,14 +10,14 @@ import concreteWorld.VoronoiGameField;
 
 public class ParameterFactory {
 	
-	public static List<Parameter> getParameters(VoronoiGameField gameField,List<Actor> team){
+	public static List<Parameter> getParameters(VoronoiGameField gameField){
 		
 		
 		
 		List<Parameter> returnValue = new ArrayList<Parameter>();
 		
 		//add pamaeter here
-		returnValue.add(new AreaParamter(gameField,team));
+		returnValue.add(new AreaParamter(gameField));
 	
 		return returnValue;
 	}

@@ -13,41 +13,39 @@ import concreteWorld.VoronoiGameField;
 public class AreaParamter extends Parameter {
 
 	VoronoiGameField gameField;
-	List<Actor> team;
 
-	public AreaParamter(VoronoiGameField gameField,List<Actor> team) {
+	public AreaParamter(VoronoiGameField gameField) {
 
 		this.gameField = gameField;
-		this.team = team;
 	}
 
 	@Override
 	public void evaluate() {
 		for(OwnedPolygon polygon : gameField.getAllPolygons()){
 
-			if(polygonBelongsToOpponent(polygon)){
+//			if(polygonBelongsToOpponent(polygon)){
 
 				//compute Area and assign weight
 				double cummulative_weight = polygon.getWeight();
 				cummulative_weight += Polygons.getArea(polygon);
 				polygon.setWeight(cummulative_weight);
-			}else{//we would never place stone in our own polygon
-				polygon.setWeight(0);
-			}
+//			}else{//we would never place stone in our own polygon
+//				polygon.setWeight(0);
+//			}
 		}
 	}
 
-	private boolean polygonBelongsToOpponent(OwnedPolygon polygon) {
-		
-		boolean polygonBelongsToOpponent = true;
-		
-		for(Actor team_member : team){
-			if(team_member == polygon.getOwner()){
-				polygonBelongsToOpponent = false;
-			}
-		}
-		
-		return polygonBelongsToOpponent;
-	}
+//	private boolean polygonBelongsToOpponent(OwnedPolygon polygon) {
+//		
+//		boolean polygonBelongsToOpponent = true;
+//		
+//		for(Actor team_member : team){
+//			if(team_member == polygon.getOwner()){
+//				polygonBelongsToOpponent = false;
+//			}
+//		}
+//		
+//		return polygonBelongsToOpponent;
+//	}
 
 }

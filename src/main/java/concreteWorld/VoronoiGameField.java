@@ -384,6 +384,31 @@ public class VoronoiGameField extends Mesh<OwnedPolygon> {
 	}
 
 
+	public Vec getNextMove(){
+
+		//Assumes that this will always be called by randome player
+		OwnedPolygon bestpoly = 	EvaluateGameField.getBestPolygonForPlacingStone(this);		
+
+		//best location within polygon is centroid
+		List<Vertex> vertices = bestpoly.getVertices();
+		Vec mid = new Vec(new Loc2d(0,0));
+		for(Vertex v : vertices){
+			mid.add( v.getLocation() );
+		}
+		Vec location = mid.scale( 1.0 / vertices.size() );
+		//check if there is already a stone in this place
+		for(OwnedPolygon poly : getFaces()){
+			if(poly.getStone().get(0) == location.get(0) || poly.getStone().get(1) == location.get(1)){
+				//there is something already in centroid
+				double currentX = location.get(0);
+				double currentY = location.get(1);
+				location.set(0,currentX);
+				location.set(0,currentY);
+			}
+		}
+		
+		return location;
+	}
 
 
 
@@ -407,4 +432,5 @@ public class VoronoiGameField extends Mesh<OwnedPolygon> {
 	public Collection<OwnedPolygon> getAllPolygons() {
 		return getFaces();
 	}
+
 }

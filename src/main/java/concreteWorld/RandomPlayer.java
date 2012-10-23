@@ -1,5 +1,6 @@
 package concreteWorld;
 
+import util.Vecs.Vec;
 import gameworld.Actor;
 import gameworld.Stone;
 import gameworld.World;
@@ -11,12 +12,15 @@ public class RandomPlayer implements Actor {
     final String name;
     final int    playerNumber;
     final Team   team;
+    VoronoiGameField gameField;// this represents the actual game state
+    VoronoiGameField previousgameStatefield; // this a cahced copy
     
 	public RandomPlayer(String name, int playerNumber, Team team)
     {
         this.name = name;
         this.playerNumber = playerNumber;
         this.team = team;
+        gameField = new VoronoiGameField();
     }
 	
     @Override
@@ -33,8 +37,20 @@ public class RandomPlayer implements Actor {
 
 	@Override
 	public WorldUpdate proposeAction() {
-	    int x = (int) (World.WIDTH  * Math.random());
-		int y = (int) (World.HEIGHT * Math.random());
+		
+        previousgameStatefield = new VoronoiGameField(gameField);
+
+        //applyc hanges in previousgameStateField
+        Vec nextMove = previousgameStatefield.getNextMove();
+        
+	    //int x = (int) (World.WIDTH  * Math.random());
+		//int y = (int) (World.HEIGHT * Math.random());
+        
+        int x = (int) nextMove.get(0);
+		int y = (int) nextMove.get(1);
+		
+		previousgameStatefield.placeStone(new Stone(x,y),World.getInstance().getCurrentPlayer());
+		
 		return new WorldUpdate(WorldUpdate.Type.PLACE_STONE, this, new Stone(x,y));
 	}
 	
