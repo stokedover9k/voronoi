@@ -15,6 +15,9 @@ public class RandomPlayer implements Actor {
     VoronoiGameField gameField;// this represents the actual game state
     VoronoiGameField previousgameStatefield; // this a cahced copy
     
+    int lastMoveX;
+    int lastMoveY;
+    
 	public RandomPlayer(String name, int playerNumber, Team team)
     {
         this.name = name;
@@ -38,6 +41,7 @@ public class RandomPlayer implements Actor {
 	@Override
 	public WorldUpdate proposeAction() {
 		
+		//makes a deep copy
         previousgameStatefield = new VoronoiGameField(gameField);
 
         //applyc hanges in previousgameStateField
@@ -48,6 +52,9 @@ public class RandomPlayer implements Actor {
         
         int x = (int) nextMove.get(0);
 		int y = (int) nextMove.get(1);
+		
+		lastMoveX = x;
+		lastMoveY = y;
 		
 		previousgameStatefield.placeStone(new Stone(x,y),World.getInstance().getCurrentPlayer());
 		
@@ -60,9 +67,19 @@ public class RandomPlayer implements Actor {
 	}
 
     @Override
-    public void receiveState(WorldState worldState) { }
+    public void receiveState(WorldState worldState) {
+    	
+    	
+    	
+    }
 
     @Override
-    public void receiveUpdate(WorldUpdate worldUpdate) { }
+    public void receiveUpdate(WorldUpdate worldUpdate) { 
+    	
+    	if(worldUpdate.isConfirm()){
+    		gameField.placeStone(new Stone(lastMoveX,lastMoveY),World.getInstance().getCurrentPlayer());
+    	}
+    	
+    }
 
 }
